@@ -138,16 +138,3 @@ if __name__ == '__main__':
     records = p.map(parse, products)
     p.terminate()
     p.join()
-
-
-    
-    
-    # print('lista de productos', len(products_list))
-    # print('lista de links', len(product_links))
-
-
-# file = open('accesos.txt', 'w')
-# for link in product_links:
-#     file.write(link+'\n')
-    
-# file.close()
