@@ -74,67 +74,66 @@ def get_list(url, search_term):
 
 
 # Function to access to each link 
-def parse(product_links):
+def parse(link):
     
     ua = UserAgent()
     headers = {'User-Agent': ua.random}
-    data = []
     
-    for link in product_links:
-        f = requests.get(link, headers=headers, timeout=7)
+    f = requests.get(link, headers=headers, timeout=7)
         
-        if f.status_code != 200:
-            print('Could not access to link')
-            quit()
+    if f.status_code != 200:
+        print('Could not access to link')
+        quit()
             
-        f = f.text
-        hun = BeautifulSoup(f, 'html.parser')
+    f = f.text
+    hun = BeautifulSoup(f, 'html.parser')
         
-        try:
-            price = hun.find('span', {'class': 'andes-money-amount__fraction'}).text.replace('\n',"").strip()
-        except:
-            price = None
+    try:
+        price = hun.find('span', {'class': 'andes-money-amount__fraction'}).text.replace('\n',"").strip()
+    except:
+        price = None
                 
-        try:
-            image = hun.find('img', {'class': 'ui-pdp-image ui-pdp-gallery__figure__image'})['data-zoom']
-        except:
-            image = None
+    try:
+        image = hun.find('img', {'class': 'ui-pdp-image ui-pdp-gallery__figure__image'})['data-zoom']
+    except:
+        image = None
                     
-        try:
-            sells_qty = hun.find('span', {'class': 'ui-pdp-subtitle'}).text.replace('\n',"").strip()
-            sells_qty = sells_qty.split(' ')
-            sells_qty = sells_qty[-2]
-        except:
-            sells_qty = None
+    try:
+        sells_qty = hun.find('span', {'class': 'ui-pdp-subtitle'}).text.replace('\n',"").strip()
+        sells_qty = sells_qty.split(' ')
+        sells_qty = sells_qty[-2]
+    except:
+        sells_qty = None
                     
-        try:
-            title = hun.find('h1', {'class': 'ui-pdp-title'}).text.replace('\n',"").strip()
-        except:
-            title = None
+    try:
+        title = hun.find('h1', {'class': 'ui-pdp-title'}).text.replace('\n',"").strip()
+    except:
+        title = None
             
-        try:
-            rating = hun.find('span', {'class': 'ui-pdp-review__amount'}).text.replace('\n',"").strip()
-        except:
-            rating = None
+    try:
+        rating = hun.find('span', {'class': 'ui-pdp-review__amount'}).text.replace('\n',"").strip()
+    except:
+        rating = None
             
-        item_data = {
-            'title': title,
-            'image': image,
-            'Sells': sells_qty,
-            'price': price
-        }
-        data.append(item_data)
+    item_data = {
+        'Ttile': title,
+        'Image': image,
+        'Sells': sells_qty,
+        'Price': price,
+        'Rating': rating
+    }
         
-    return data
+    return item_data
 
 
 search_term = 'huevo-diarrea'
-url = 'https://listado.mercadolibre.com.ar'
+url = 'https://listado.mercadolibre.com.uy'
 
+data_produts = []
 products = get_list(url, search_term)
 
 if __name__ == '__main__':
-    p = Pool(5)  # Pool tells how many at a time
-    records = p.map(parse, products)
-    p.terminate()
-    p.join()
+    with Pool(10) as p:
+        records = p.map(parse, products)
+    df = pd.DataFrame(records)
+    print(df)
