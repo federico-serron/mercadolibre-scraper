@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from fake_useragent import UserAgent
 from multiprocessing import Pool
+from slugify import slugify
 
 
 # Getting all the links from the results
@@ -126,13 +127,13 @@ def parse(link):
     return item_data
 
 
-search_term = 'huevo-diarrea'
 url = 'https://listado.mercadolibre.com.uy'
 
-data_produts = []
-products = get_list(url, search_term)
-
 if __name__ == '__main__':
+    search_term = input('Please, type what you are looking for: ')
+    search_term = slugify(search_term
+                          )
+    products = get_list(url, search_term)
     with Pool(10) as p:
         records = p.map(parse, products)
     df = pd.DataFrame(records)
