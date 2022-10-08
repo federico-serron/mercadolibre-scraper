@@ -19,22 +19,22 @@ def get_list(url, search_term):
     k = k.text
     soup = BeautifulSoup(k, 'html.parser')
 
-    # Obtengo el numero de paginas y lo convierto a un int
+    # Getting the total number of pages
     try:
         page_count = soup.find('li', {'class': 'andes-pagination__page-count'}).text
         page_count = int(page_count.split(' ')[-1])
     except:
         page_count=1
 
+    # Navigation through the pagination
     for x in range(1, page_count + 1):
-        # Aca tengo que cambiar lo que va despues de la barra, eso es lo que debe ingresar el cliente, asi que debe ser DINAMICO
         if x == 1 and page_count > 1:
             next_page = soup.find('a', {'class': 'andes-pagination__link shops__pagination-link ui-search-link'}).get('href')
             if next_page is not None:
                 next_page = next_page.split('/')
                 last_term = next_page[-1].split('_', 1)
-                next_page[-1:] = last_term[0], last_term[1] #El 0 es el termino de busqueda
-                next_page[-1] = next_page[-2] + '_' + next_page[-1] # El -2 es el termino de busqueda
+                next_page[-1:] = last_term[0], last_term[1] # 0 is the search term
+                next_page[-1] = next_page[-2] + '_' + next_page[-1] # -2 is the search term
                 next_page = '/'.join(next_page)  
             
         elif x < page_count and page_count > 1:
@@ -46,8 +46,8 @@ def get_list(url, search_term):
             if next_page is not None:
                 next_page = next_page.split('/')
                 last_term = next_page[-1].split('_', 1)
-                next_page[-1:] = last_term[0], last_term[1] #El 0 es el termino de busqueda
-                next_page[-1] = next_page[-2] + '_' + next_page[-1] # El -2 es el termino de busqueda
+                next_page[-1:] = last_term[0], last_term[1] # 0 is the search term
+                next_page[-1] = next_page[-2] + '_' + next_page[-1] # -2 is the search term
                 next_page = '/'.join(next_page)
             
         elif x == page_count and page_count >= x+1:
@@ -57,7 +57,7 @@ def get_list(url, search_term):
             soup = BeautifulSoup(k, 'html.parser')
             
         
-        # Busco todos los links de los productos en el listado de resultados
+        # Catching all the products's links and save them into a list
         products_list = soup.find_all('li', {'class': 'ui-search-layout__item shops__layout-item'})
         if products_list is not None:
             for product in products_list:
@@ -131,10 +131,13 @@ url = 'https://listado.mercadolibre.com.uy'
 
 if __name__ == '__main__':
     search_term = input('Please, type what you are looking for: ')
-    search_term = slugify(search_term
-                          )
+    search_term = slugify(search_term)
+    
     products = get_list(url, search_term)
+    
     with Pool(10) as p:
         records = p.map(parse, products)
+        
+    # Printing dataframe 
     df = pd.DataFrame(records)
     print(df)
