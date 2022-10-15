@@ -10,15 +10,18 @@
 
     <title>{{ title }}</title>
 </head>
+<header>
+    <h1 class="text-center my-3">Bienvenido/a a MELI-Scraper</h1>
+</header>
 <body>
     <div class="container mt-3">
-        <h1 class="text-center mb-3">Bienvenido a MELI-Scraper</h1>
+        
         {% for message in get_flashed_messages() %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">{{ message }}</div>
         {% endfor %}
         <div class="row">
             <div class="col-md-2"></div>
-            <div class="col-md-8">
+            <div class="col-md-8 my-5">
                 <form action="" method="post" novalidate>
                     {{ form.hidden_tag() }}
                     <div class="form-floating mb-3">
@@ -37,15 +40,18 @@
                     </div>
                 </form>
             </div>
-            <br>
-            <br>
-            <br>
             <div class="col-md-2"></div>
 
-            
+            <!-- LISTING ALL FOUND PRODUCTS -->
             {% if products %}
-            <div class="col-md-12">
-            <hr/>
+            <div class="row text-center">
+                <div class="mx-auto alert alert-success fade show col-md-3" role="alert">Promedio de ventas: <b>{{ avg_sales }}</b></div>
+                <div class="mx-auto alert alert-success fade show col-md-3" role="alert">Precio promedio: <b>{{ avg_price }}</b></div>
+                <div class="mx-auto alert alert-success fade show col-md-3" role="alert">Articulos encontrados: <b>{{ products|length }}</b></div>
+
+
+            </div>
+            <div class="col-md-12 my-3">
                 <table class="table">
                     <thead class="thead-dark">
                         <tr>
@@ -62,10 +68,10 @@
                         <tr>
                             <th scope="row">{{ product.id }}</th>
                             <td>
-                                <img src="{{ product.image }}" height="65px" width="65px">
+                                <img src="{{ product.image }}" class="rounded block" height="65px" width="65px">
                             </td>
                             <td>
-                                {{ product.title }}
+                                <a href="{{ product.link }}" target="_blank" rel="noopener noreferrer">{{ product.title }}</a>
                             </td>
                             <td> 
                                 {{ product.sells }}
@@ -80,8 +86,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
-                <hr/>
             </div>
             {% endif %}
 

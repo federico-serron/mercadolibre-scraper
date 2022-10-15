@@ -4,6 +4,7 @@ import pandas as pd
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 from slugify import slugify
+import numpy as np
 
 
 # Getting all the links from the results
@@ -91,7 +92,9 @@ def parse(link):
     hun = BeautifulSoup(f, 'html.parser')
         
     try:
+        price_symbol = hun.find('span', {'class': 'andes-money-amount__currency-symbol'}).text.replace('\n', '').strip()
         price = hun.find('span', {'class': 'andes-money-amount__fraction'}).text.replace('\n',"").strip()
+                 
     except:
         price = None
                 
@@ -113,7 +116,10 @@ def parse(link):
         title = None
             
     try:
-        rating = hun.find('span', {'class': 'ui-pdp-review__amount'}).text.replace('\n',"").strip()
+        rating_link = hun.find('a', {'class': 'ui-pdp-review__label ui-pdp-review__label--link'}).get('href')
+        r = requests.get(rating_link)
+        rating_soup = BeautifulSoup(r, 'html.parser')
+        rating = rating_soup.find('p', {'class': 'ui-review-capability__rating__average ui-review-capability__rating__average--desktop'}).text
     except:
         rating = None
             
@@ -122,15 +128,16 @@ def parse(link):
         'image': image,
         'sells': sells_qty,
         'price': price,
-        'rating': rating
+        'rating': rating,
+        'link': link
     }
         
     return item_data
 
 
-def makeScrap(products):
+def makeScrap(links):
     with Pool(10) as p:
-        records = p.map(parse, products)
+        records = p.map(parse, links)
     
     return records
 
@@ -145,6 +152,6 @@ if __name__ == '__main__':
     products = get_list(url, search_term)
     records = makeScrap(products)
         
-    # Printing dataframe 
+    # Printing dataframe
     df = pd.DataFrame(records)
     print(df)
