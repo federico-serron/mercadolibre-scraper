@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" rel="stylesheet">
+
 
     <title>{{ title }}</title>
 </head>
@@ -20,34 +24,32 @@
             <div class="alert alert-danger alert-dismissible fade show" role="alert">{{ message }}</div>
         {% endfor %}
         <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8 my-5">
-                <form action="" method="post" novalidate>
-                    {{ form.hidden_tag() }}
-                    <div class="form-floating mb-3">
-                        {{ form.term(size=128,class_="form-floating mb-3") }}
-                        <div class="col-md-2">
-                            {{ form.term.label }}
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <div class="d-flex justify-content-center align-items-center container">
+                    <div class="card py-5 px-3">
+                        <h5 class="m-0">Busqueda de articulos</h5><span class="mobile-text">Busque cualquier articulo que desee analizar, por ejemplo: <b class="text-danger">Ropa para bebes</b></span>
+                        <div class="d-flex flex-row mt-5">
+                            {{ form.term(class_="form-control") }}
                         </div>
-                    </div>
+                        <span class="d-block mobile-text mt-2">Termino de busqueda</span>
 
-                        {% for error in form.term.errors %}
-                        <span style="color: red;">{{ error }}</span>
-                        {% endfor %}
+                        <div class="d-flex flex-row mt-5">
+                            {{ form.country(class_="form-control") }}
+                        </div>
+                        <span class="d-block mobile-text mt-2">Pais</span>
 
-                    <div class="form-group text-center">
-                        {{ form.submit(class_="btn btn-lg btn-primary") }}
+                        <div class="text-center mt-5"><span class="d-block mobile-text">Esto puede tardar algunos segundos o minutos, dependiendo de la cantidad de resultados.</span>{{ form.submit(class_="font-weight-bold text-danger cursor mt-2") }}</span></div>
                     </div>
-                </form>
-            </div>
-            <div class="col-md-2"></div>
+                </div>
+            </form>
 
             <!-- LISTING ALL FOUND PRODUCTS -->
             {% if products %}
-            <div class="row text-center">
-                <div class="mx-auto alert alert-success fade show col-md-3" role="alert">Promedio de ventas: <b>{{ avg_sales }}</b></div>
-                <div class="mx-auto alert alert-success fade show col-md-3" role="alert">Precio promedio: <b>{{ avg_price }}</b></div>
-                <div class="mx-auto alert alert-success fade show col-md-3" role="alert">Articulos encontrados: <b>{{ products|length }}</b></div>
+            <div class="row text-center mt-5">
+                <div class="shadow p-3 mb-5 bg-white rounded mx-auto alert alert-success fade show col-md-3" role="alert">Promedio de ventas: <b>{{ avg_sales }}</b></div>
+                <div class="shadow p-3 mb-5 bg-white rounded mx-auto alert alert-success fade show col-md-3" role="alert">Precio promedio: <b>{{ avg_price }}</b></div>
+                <div class="shadow p-3 mb-5 bg-white rounded mx-auto alert alert-success fade show col-md-3" role="alert">Articulos encontrados: <b>{{ products|length }}</b></div>
 
 
             </div>
@@ -68,7 +70,7 @@
                         <tr>
                             <th scope="row">{{ product.id }}</th>
                             <td>
-                                <img src="{{ product.image }}" class="rounded block" height="65px" width="65px">
+                                <img src="{{ product.image }}" class="rounded block" style="height: auto;" width="65px">
                             </td>
                             <td>
                                 <a href="{{ product.link }}" target="_blank" rel="noopener noreferrer">{{ product.title }}</a>

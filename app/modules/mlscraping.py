@@ -4,8 +4,6 @@ import pandas as pd
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 from slugify import slugify
-import numpy as np
-
 
 # Getting all the links from the results
 def get_list(url, search_term):
