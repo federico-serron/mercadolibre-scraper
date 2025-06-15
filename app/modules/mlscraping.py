@@ -2,14 +2,23 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from fake_useragent import UserAgent
+
+# Función para obtener un user agent aleatorio o uno fijo si fake_useragent falla
+def get_random_user_agent():
+    try:
+        ua = UserAgent()
+        return ua.random
+    except Exception:
+        # Fallback a un user agent común de Chrome
+        return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+
 from multiprocessing import Pool
 from slugify import slugify
 
 # Getting all the links from the results
 def get_list(url, search_term):
     product_links = []
-    ua = UserAgent()
-    headers = {'User-Agent': ua.random}
+    headers = {'User-Agent': get_random_user_agent()}
     search_term_slug = slugify(search_term)
     
     k = requests.get(f'{url}/{search_term_slug}', headers=headers, timeout=7)
@@ -21,8 +30,10 @@ def get_list(url, search_term):
 
     # Getting the total number of pages
     try:
-        page_count = soup.find('li', {'class': 'andes-pagination__page-count'}).text
-        page_count = int(page_count.split(' ')[-1])
+        total_page_count = soup.find_all('li', class_='andes-pagination__button')
+        page_count = total_page_count[-1]
+        #page_count = int(page_count.split(' ')[-1])
+        print(page_count)
     except:
         page_count=1
 
@@ -77,8 +88,7 @@ def get_list(url, search_term):
 # Function to access to each link 
 def parse(link):
     
-    ua = UserAgent()
-    headers = {'User-Agent': ua.random}
+    headers = {'User-Agent': get_random_user_agent()}
     
     f = requests.get(link, headers=headers, timeout=7)
         
@@ -134,7 +144,7 @@ def parse(link):
 
 
 def makeScrap(links):
-    with Pool(10) as p:
+    with Pool(1) as p:
         records = p.map(parse, links)
     
     return records
