@@ -30,7 +30,7 @@ def get_list(url, search_term):
 
     # Getting the total number of pages
     try:
-        total_page_count = soup.find_all('li', class_='andes-pagination__button')
+        total_page_count = soup.find_all('li', class_='andes-pagination')
         page_count = total_page_count[-1]
         #page_count = int(page_count.split(' ')[-1])
         print(page_count)
